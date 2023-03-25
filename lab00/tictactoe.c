@@ -3,7 +3,7 @@
 #include <stdbool.h> /* Tipo bool             */
 
 #include <assert.h>  /* assert() */
-#define SIDE_SIZE 1
+#define SIDE_SIZE 3
 #define CELL_MAX (SIDE_SIZE * SIDE_SIZE - 1)
 
 void print_sep(int length) {
@@ -28,50 +28,29 @@ void print_board(char board[SIDE_SIZE][SIDE_SIZE])
     }
 }
 
-char get_winner(char board[SIDE_SIZE][SIDE_SIZE])
+// BIG O = O(SIDE_SIZE)
+char get_winner(char board[SIDE_SIZE][SIDE_SIZE], unsigned int last_row, unsigned int last_col)
 {
     char winner = '-';
-    for (unsigned int row = 0; row < SIDE_SIZE; row++) {
-        bool horizontal_winner = true;
-        bool vertical_winner = true;
-        for (int col = 0; col < SIDE_SIZE; col++) {
-            horizontal_winner = horizontal_winner && board[row][col] == board[row][0];
-            vertical_winner = vertical_winner && board[col][row] == board[0][row];
-        }
-        if (horizontal_winner) {
-            winner = board[row][0];
-            break;
-        }
-        if (vertical_winner) {
-            winner = board[0][row];
-            break;
-        }
+    bool horizontal_winner = true;
+    bool vertical_winner = true;
+    bool diagonal_winner = true;
+    bool diagonal_b_winner = true;
+    for (unsigned int i = 1; i < SIDE_SIZE; i++) {
+        horizontal_winner = horizontal_winner && board[last_row][last_col] == board[last_row][(last_col+i)%SIDE_SIZE];
+        vertical_winner = vertical_winner && board[last_row][last_col] == board[(last_row+i)%SIDE_SIZE][last_col];
+        diagonal_winner = diagonal_winner && board[i][i] == board[0][0];
+        diagonal_b_winner = diagonal_b_winner && board[i][SIDE_SIZE - 1 - i] == board[0][SIDE_SIZE - 1];
     }
-    if (winner == '-') {
-        bool diagonal_winner = true;
-        bool diagonal_b_winner = true;
-        for (int i = 0; i < SIDE_SIZE; i++) {
-            diagonal_winner = diagonal_winner && board[i][i] == board[0][0];
-            diagonal_b_winner = diagonal_winner && board[i][SIDE_SIZE - i - 1] == board[0][SIDE_SIZE - 1];
-        }
-        if (diagonal_winner) {
-            winner = board[0][0];
-        }
-        if (diagonal_b_winner) {
-            winner = board[0][SIDE_SIZE - 1];
-        }
+    if (horizontal_winner || vertical_winner) {
+        winner = board[last_row][last_col];
+    } else if (diagonal_winner) {
+        winner = board[0][0];
+    } else if (diagonal_b_winner) {
+        winner = board[0][SIDE_SIZE - 1];
     }
 
     return winner;
-}
-
-bool has_free_cell(char board[SIDE_SIZE][SIDE_SIZE])
-{
-    bool free_cell=false;
-    for (unsigned int i = 0; i <= CELL_MAX; ++i) {
-        free_cell = free_cell || board[i/SIDE_SIZE][i%SIDE_SIZE] == '-';
-    }
-    return free_cell;
 }
 
 int main(void)
@@ -84,10 +63,11 @@ int main(void)
         board[i/SIDE_SIZE][i%SIDE_SIZE] = '-';
     }
 
+    unsigned int has_free_cell = 0;
     char turn = 'X';
     char winner = '-';
     int cell = 0;
-    while (winner == '-' && has_free_cell(board)) {
+    while (winner == '-' && has_free_cell != CELL_MAX+1) {
         print_board(board);
         printf("\nTurno %c - Elija posición (número del 0 al %d): ", turn,
                CELL_MAX);
@@ -102,7 +82,8 @@ int main(void)
             if (board[row][colum] == '-') {
                 board[row][colum] = turn;
                 turn = turn == 'X' ? 'O' : 'X';
-                winner = get_winner(board);
+                has_free_cell++;
+                winner = get_winner(board, row, colum);
             } else {
                 printf("\nCelda ocupada!\n");
             }
