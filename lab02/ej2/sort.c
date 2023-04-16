@@ -11,8 +11,8 @@ static void quick_sort_rec(int a[], unsigned int izq, unsigned int der) {
     unsigned int pivot;
     if (izq < der) {
         pivot = partition(a, izq, der);
-        quick_sort_rec(a, izq, pivot);
-        quick_sort_rec(a, pivot+1u, der);
+        quick_sort_rec(a, izq, (pivot == 0u) ? 0u : pivot - 1u);
+        quick_sort_rec(a, pivot+1, der);
     }
 
 }
