@@ -10,7 +10,13 @@ static const int AMOUNT_OF_WEATHER_VARS = 6 ;
 Weather weather_from_file(FILE* file)
 {
     Weather weather;
-    /* Completar aqui */
+    int res = fscanf(file, EXPECTED_WEATHER_FILE_FORMAT, &weather._average_temp,
+                     &weather._max_temp, &weather._min_temp, &weather._pressure,
+                     &weather._moisture, &weather._rainfall);
+    if (res != AMOUNT_OF_WEATHER_VARS) {
+        fprintf(stderr, "Linea de clima invalida.\n");
+        exit(EXIT_FAILURE);
+    }
     return weather;
 }
 

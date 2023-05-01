@@ -21,6 +21,16 @@ int main(void) {
     int x = 1;
     person_t m = {90, 'M'};
     int a[] = {0, 1, 2, 3};
+    int * aux = NULL;
+    aux = &x;
+    * aux = 9;
+    aux = &m.age;
+    * aux = 100;
+    char * aux2 = NULL;
+    aux2 = &m.name_initial;
+    * aux2 = 'F';
+    aux = &a[1];
+    * aux = 42;
 
     /* Completar aquí:
        Al finalizar la ejecución las variables deben tener los siguientes valores

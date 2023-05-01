@@ -66,6 +66,7 @@ static unsigned int process_string(FILE *file, char separator, char result[], un
         {
             result[str_size] = c;
             ++str_size;
+
         }
         else if (c != separator && str_size >= result_max_size - 1u)
         {

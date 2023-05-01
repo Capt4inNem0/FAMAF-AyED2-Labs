@@ -58,7 +58,7 @@ void array_from_file(WeatherTable array, const char *filepath) {
             exit(EXIT_FAILURE);
         }
         Weather weather = weather_from_file(file);
-        /* Completar acá: Guardar la medición de clima en el arreglo multidimensional */
+        array[k_year - FST_YEAR][k_month - 1][k_day - 1] = weather;
     }
     fclose(file);
 }
